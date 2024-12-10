@@ -1,37 +1,80 @@
 #include <iostream>
 #include <vector>
-#include <cmath>
-#include <algorithm>
-#include <limits>
 
-struct Point {
-    int x, y;
-};
-
-double closestPair(std::vector<Point>& points) {
-    std::sort( points.begin(), points.end(), []( const Point& p1, const Point& p2 ) {
-        return p1.x < p2.x;
-    } );
-
-}
-
-void printPoints(const std::vector<Point>& points) {
-    for (const Point& p : points) {
-        std::cout << "(" << p.x << ", " << p.y << ") ";
-    }
+void merge(std::vector<int> &v, int low, int mid, int high) {
+    std::cout << "Merging: low = " << low << ", mid = " << mid << ", high = " << high << "\n";
     std::cout << std::endl;
+
+    std::vector<int> temp;
+
+    int left = low;
+    int right = mid + 1;
+
+    while (left <= mid && right <= high) {
+        if (v[left] < v[right]) {
+            temp.push_back(v[left++]);
+        } else {
+            temp.push_back(v[right++]);
+        }
+    }
+
+    while (left <= mid) {
+        temp.push_back(v[left++]);
+    }
+
+    while (right <= high) {
+        temp.push_back(v[right++]);
+    }
+
+    for (int i = low; i <= high; ++i) {
+        v[i] = temp[i - low];
+    }
+
+    std::cout << "Merged array: ";
+    for (int i = low; i <= high; ++i) {
+        std::cout << v[i] << " ";
+    }
+    std::cout << "\n\n";
 }
 
+void mergeSort(std::vector<int> &v, int low, int high) {
+    if (low < high) {
+        int mid = (low + high) / 2;
 
+        std::cout << "Dividing: low = " << low << ", mid = " << mid << ", high = " << high << "\n\n";
+
+        mergeSort(v, low, mid);
+        mergeSort(v, mid + 1, high);
+        merge(v, low, mid, high);
+    }
+}
 
 int main() {
-    std::vector<Point> points = { {2, 3}, {12, 30}, {40, 50}, {5, 1}, {12, 10}, {3, 4} };
+    std::cout << "\nEnter how many digits: ";
+    int size;
+    std::cin >> size;
 
-    std::cout << "Points: ";
-    printPoints(points);
+    std::vector<int> v(size);
 
-    double minDistance = closestPair(points);
-    std::cout << "The smallest distance is: " << minDistance << std::endl;
+    for (int i = 0; i < v.size(); i++) {
+        std::cout << "\nEnter digit " << i + 1 << ": ";
+        std::cin >> v[i];
+    }
+
+    std::cout << "\n\nBefore sorting list: ";
+    for (int num : v) {
+        std::cout << num << " ";
+    }
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    mergeSort(v, 0, v.size() - 1);
+
+    std::cout << "\nAfter sorting list: ";
+    for (int num : v) {
+        std::cout << num << " ";
+    }
+    std::cout << "\n\n";
 
     return 0;
 }
